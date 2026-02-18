@@ -10,7 +10,7 @@
 	"scripts": {
 		"build": "rbxtsc",
 		"watch": "rbxtsc -w",
-		"prepublishOnly": "pnpm run build"
+		"prepublishOnly": "bun run build"
 	},
 	"keywords": [
 		"validation",
@@ -42,7 +42,7 @@
 		"@rbxts/types": "^1.0.908",
 		"prettier": "^3.8.1",
 		"roblox-ts": "^3.0.0",
-		"typescript": "^5.5.3",
+		"typescript": "5.5.3",
 		"typescript-eslint": "^8.56.0",
 		"@eslint/js": "^10.0.1",
 		"@typescript-eslint/eslint-plugin": "^8.56.0",

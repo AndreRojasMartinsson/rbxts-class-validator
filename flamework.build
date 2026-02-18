@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"flameworkVersion": "1.3.2",
+	"identifiers": {
+		"@rbxts/class-validator:out/from.decorator@WithFrom.WithFromClass": "@rbxts/class-validator:from.decorator@WithFrom.WithFromClass"
+	},
+	"metadata": {},
+	"identifierPrefix": "@rbxts/class-validator"
+}
