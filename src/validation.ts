@@ -112,7 +112,6 @@ export function parseInto<T extends object>(
 		let value = staged[property] as unknown;
 		const ctx: ValidatorContext = { object: target, property, value };
 
-		// Coerce first (so Default can fill even if optional)
 		const coercer = Reflect.getMetadata<CoerceFn>(target, META_COERCE_KEY, property);
 		if (coercer !== undefined) {
 			const res = coercer(value, ctx);
@@ -124,10 +123,8 @@ export function parseInto<T extends object>(
 			ctx.value = value;
 		}
 
-		// Optional skip AFTER coercion
 		const optional = Reflect.getMetadata<boolean>(target, META_OPT_KEY, property) ?? false;
 		if (optional && isNil(value)) {
-			// still stage it as nil (or omit). Omit is usually nicer:
 			staged[property] = undefined;
 			continue;
 		}
@@ -159,18 +156,15 @@ export function parseInto<T extends object>(
 			ctx.value = value;
 		}
 
-		// If transforms failed, we already pushed an error; don’t stage
 		if (errors.size() > 0 && errors[errors.size() - 1].property === property) {
 			continue;
 		}
 
-		// Stage final value
 		staged[property] = value;
 	}
 
 	if (errors.size() > 0) return { ok: false, errors };
 
-	// Commit only on success
 	for (const [k, v] of pairs(staged as object)) {
 		(target as Record<string, unknown>)[k as string] = v as unknown;
 	}
@@ -183,7 +177,6 @@ export function assertValid(obj: object): void {
 	if (errs.size() === 0) return;
 
 	const lines = errs.map(
-		// (e) => `${"\t".rep(5)}${e.property}: ${tostring(e.value)} -> ${e.constraints.join(", ")}`,
 		(e) =>
 			`${"\t".rep(5)}${e.property}: ${HttpService.JSONEncode(e.value)} -> ${e.constraints.join(", ")}`,
 	);
