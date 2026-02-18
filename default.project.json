@@ -1,0 +1,10 @@
+{
+	"name": "rbxts-class-validator",
+	"globIgnorePaths": ["**/package.json", "**/tsconfig.json"],
+	"tree": {
+		"$className": "Folder",
+		"out": {
+			"$path": "out"
+		}
+	}
+}
