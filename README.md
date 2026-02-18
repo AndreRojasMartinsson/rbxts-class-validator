@@ -78,6 +78,7 @@ const user = await UserDto.from({
 // Validate an already-existing instance (mutates values as it validates/transforms)
 // NOTE: Really not necessary in this case since *.from* already validates and transforms instance.
 assertValid(user);
+```
 
 --------------
 
@@ -97,3 +98,195 @@ Each decorated property can participate in up to three phases:
 * WithFrom.from() uses parseInto() which:
     * rejects unknown keys (strict),
     * stages changes, and only commits to the instance if everything passes.
+
+--------------
+
+## API
+
+### Validation entrypoints
+`validate(obj) -> ValidationError[]`
+Returns an array of { property, value, constraints: string[] }.
+
+`assertValid(obj)`
+Throws if validate(obj) returns errors.
+
+`parseInto(target, plain) -> { ok: true, value } | { ok: false, errors }`
+Parses a plain object into an existing instance without partial mutation.
+
+`WithFrom(Base)`
+Adds a typed `static from(plain)` constructor that uses parseInto() + assertParsed().
+
+--------------
+
+### Validators
+
+#### Primitives
+* @IsString()
+* @IsNumber()
+* @IsInteger()
+* @IsBoolean()
+* @IsOptional()
+* @Min(n), @Max(n)
+* @MinLength(n), @MaxLength(n)
+
+#### Objects / arrays / tuples
+
+* @Nested() – runs validate() on a nested DTO/table
+* @IsArray()
+* @ArrayMinSize(n), @ArrayMaxSize(n)
+* @ArrayElements((value, index) => string | undefined)
+* @IsTuple(...elementValidators)
+* @TupleLength(n)
+
+#### Literals / template-like strings
+
+* @IsLiteral(...allowed)
+* @IsTemplateLiteral("user:${int}:${string}")
+
+#### Collections
+
+* @IsRecord(), @RecordEntries(keyValidator?, valueValidator?, message?)
+* @IsMap(), @MapEntries(keyValidator?, valueValidator?, message?)
+* @IsSet(), @SetElements(elementValidator, message?)
+* @IsReadonly() – validates deep frozen tables via table.isfrozen recursion
+
+#### Unions
+
+* @Union(A, B, ...) – passes if any schema matches
+* @ExclusiveUnion(A, B, ...) – passes if exactly one schema matches
+* @Intersect(A, B, ...) – passes if all schemas match
+* @DiscriminatedUnion("tag", { car: CarDto, bike: BikeDto })
+
+Schemas can be either:
+* a DTO class `({ new(): object })`
+* a predicate function `(value, ctx) => string | undefined`
+
+--------------
+
+#### Coercion
+
+Coercers run before validators and can replace the incoming value.
+
+Built-ins:
+* @Coerce.String()
+* @Coerce.Number()
+* @Coerce.Boolean()
+* @Coerce.Default(valueOrFactory) – only applies when property is optional and value is nil
+* @Coerce.Readonly() – deep freezes tables (recursive table.freeze)
+
+Example:
+```typescript
+export class Settings extends WithFrom(class {}) {
+  @IsOptional()
+  @Coerce.Default("en")
+  @IsString()
+  lang?: string;
+
+  @Coerce.Boolean()
+  @IsBoolean()
+  enabled!: boolean;
+}
+```
+
+--------------
+
+#### Transforms
+
+Transforms run after validation succeeds for a property.
+
+Built-ins:
+* @Transform.Map(fn)
+* @Transform.Trim()
+* @Transform.Lowercase()
+* @Transform.Uppercase()
+* @Transform.ArrayMap((value, index) => next)
+
+Example:
+```typescript
+export class Profile extends WithFrom(class {}) {
+  @IsString()
+  @Transform.Trim()
+  @Transform.Lowercase()
+  email!: string;
+
+  @IsArray()
+  @Transform.ArrayMap((v) => tostring(v))
+  tags!: string[];
+}
+```
+
+--------------
+
+#### Discriminated unions (example)
+```typescript
+import { Discriminated, DiscriminatedUnion, IsInteger, IsLiteral, IsNumber } from "rbxts_class_validator";
+
+export class CarDto extends WithFrom(class {}) {
+  @IsNumber()
+  hp!: number;
+
+  @IsInteger()
+  gear!: number;
+}
+
+export class BikeDto extends WithFrom(class {}) {
+  @IsInteger()
+  gear!: number;
+}
+
+export class Vehicle extends WithFrom(class {}) {
+  @DiscriminatedUnion("tag", {
+    car: CarDto,
+    bike: BikeDto,
+  })
+  dto!: Discriminated<"tag", { car: CarDto; bike: BikeDto }>;
+}
+
+const v = await Vehicle.from({
+  dto: { tag: "car", hp: 250, gear: 4 },
+});
+```
+
+--------------
+
+### Error output
+
+`assertValid()` / `assertParsed()` throw with a readable message like:
+
+```
+Validation failed:
+          coins: "nope" -> must be a number, must be >= 0
+          username: "" -> must have length >= 3
+```
+
+(Formatting is currently JSON-based via HttpService.JSONEncode.)
+
+--------------
+
+### Extending
+
+#### Add a custom validator
+```typescript
+import { ValidateBy } from "rbxts_class_validator";
+
+export function IsEven(message = "must be even") {
+  return ValidateBy("IsEven", (value) => {
+    if (!typeIs(value, "number")) return message;
+    return (value as number) % 2 === 0 ? undefined : message;
+  });
+}
+```
+
+#### Add a custom coercer
+```typescript
+import { Coerce } from "rbxts_class_validator";
+
+export function CoerceJson(message = "could not parse json") {
+  return Coerce.Custom((value) => {
+    if (!typeIs(value, "string")) return { ok: false, message };
+    const ok = pcall(() => game.GetService("HttpService").JSONDecode(value as string));
+    if (!ok[0]) return { ok: false, message };
+    return { ok: true, value: ok[1] };
+  });
+}
+```
