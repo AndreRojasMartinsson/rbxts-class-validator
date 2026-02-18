@@ -267,7 +267,7 @@ Validation failed:
 
 #### Add a custom validator
 ```typescript
-import { ValidateBy } from "rbxts_class_validator";
+import { ValidateBy } from "@rbxts/class-validator";
 
 export function IsEven(message = "must be even") {
   return ValidateBy("IsEven", (value) => {
@@ -279,7 +279,7 @@ export function IsEven(message = "must be even") {
 
 #### Add a custom coercer
 ```typescript
-import { Coerce } from "rbxts_class_validator";
+import { Coerce } from "@rbxts/class-validator";
 
 export function CoerceJson(message = "could not parse json") {
   return Coerce.Custom((value) => {
