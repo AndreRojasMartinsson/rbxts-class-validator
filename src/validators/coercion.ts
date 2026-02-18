@@ -23,7 +23,7 @@ function deepFreeze<T extends object>(obj: T, seen?: Set<T>): T {
 }
 
 /**
- * These decorators **do not validate** — they only attempt to *convert* incoming values
+ * These decorators **do not validate** - they only attempt to *convert* incoming values
  * into the expected runtime shape *before* validators run.
  *
  * ## Mental model

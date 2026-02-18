@@ -135,7 +135,7 @@ export function IsLiteral<T extends readonly (string | number | boolean)[]>(...a
  *   in your template (e.g. `"a:${string}:b"`).
  * - `${number}` pattern is permissive but not a perfect numeric grammar (e.g. it allows `1.`).
  *   Tighten it if you need strict decimals.
- * - This validator does not coerce — it only validates string shape.
+ * - This validator does not coerce - it only validates string shape.
  * - Non-string inputs fail immediately with the provided message.
  */
 export function IsTemplateLiteral(template: string, message = `must match template ${template}`) {

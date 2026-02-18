@@ -38,7 +38,7 @@ function isDeepFrozen<T extends object>(obj: T, seen?: Set<T>): boolean {
  * a table during the coercion phase.
  *
  * Behavior:
- * - `nil` passes (no error) — use a required validator if you need it present.
+ * - `nil` passes (no error) - use a required validator if you need it present.
  * - Non-table values fail.
  * - Tables pass only if `isDeepFrozen(value)` returns true.
  *
@@ -183,7 +183,7 @@ export function RecordEntries(
  *
  * Behavior:
  * - Fails if `value` is not a non-array table.
- * - Does not validate key/value shapes — use `@MapEntries()` for that.
+ * - Does not validate key/value shapes - use `@MapEntries()` for that.
  *
  * ## Example
  * ```ts
