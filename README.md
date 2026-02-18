@@ -219,7 +219,7 @@ export class Profile extends WithFrom(class {}) {
 
 #### Discriminated unions (example)
 ```typescript
-import { Discriminated, DiscriminatedUnion, IsInteger, IsLiteral, IsNumber } from "rbxts_class_validator";
+import { Discriminated, DiscriminatedUnion, IsInteger, IsLiteral, IsNumber } from "@rbxts/class-validator";
 
 export class CarDto extends WithFrom(class {}) {
   @IsNumber()
