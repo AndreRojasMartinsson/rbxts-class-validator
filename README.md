@@ -52,6 +52,7 @@ $ bun add @rbxts/class-validator
 $ pnpm add @rbxts/class-validator
 ```
 
+
 --------------
 
 ## Quick start
@@ -81,6 +82,164 @@ const user = await UserDto.from({
 // Validate an already-existing instance (mutates values as it validates/transforms)
 // NOTE: Really not necessary in this case since *.from* already validates and transforms instance.
 assertValid(user);
+```
+
+--------------
+
+## Example use-case
+
+### ORM-like datastoreservice.
+
+src/users.entity.ts
+```typescript
+import {
+	Coerce,
+	IsBoolean,
+	IsInteger,
+	IsNumber,
+	IsOptional,
+	Max,
+	Min,
+} from "@rbxts/class-validator";
+import { Entity, WithOrm } from "...";
+
+@Entity("users")
+export class Users extends WithOrm(class {}) {
+	@IsNumber()
+	@Max(50_000)
+	@Min(-50_000)
+	balance!: number;
+
+	@IsInteger()
+	@Max(3_000)
+	@Min(0)
+	cash!: number;
+
+	@IsBoolean()
+	@IsOptional()
+	@Coerce.Default(false)
+	banned?: boolean;
+}
+```
+
+src/...some-file
+```typescript
+await Users.insert("test_key", {
+   balance: 50.25,
+	cash: 2,
+	banned: true,
+});
+
+const userModel = await Users.select("test_key");
+print("Result", userModel, userModel.balance);
+```
+
+Implementation:
+```typescript
+import { Reflect } from "@flamework/core";
+import { AbstractCtor, assertParsed, assertValid, Ctor, parseInto } from "@rbxts/class-validator";
+import { DataStoreService } from "@rbxts/services";
+
+const META_ENTITY_KEY = "orm:entity"
+
+/** @metadata reflect identifier flamework:parameters */
+export function Entity(storeMappingName: string) {
+	/** @metadata reflect identifier flamework:parameters */
+	return (target: object) => {
+		Reflect.defineMetadata(target, META_ENTITY_KEY, storeMappingName);
+	};
+}
+
+export function WithOrm<TBase extends AbstractCtor<object>>(Base: TBase) {
+	abstract class WithOrmClass extends Base {
+		/**
+         * Selects a key in the datastore and
+         * validates against model *automagically*
+         */
+        static async select<TThis extends AbstractCtor<object>>(
+			this: TThis,
+			key: string,
+		): Promise<InstanceType<TThis> | undefined> {
+			const instance = new (this as unknown as Ctor<InstanceType<TThis>>)();
+
+			const storeName = Reflect.getMetadata<string | undefined>(this, META_ENTITY_KEY);
+			if (storeName === undefined) {
+				return undefined;
+			}
+
+			const store = DataStoreService.GetDataStore(storeName);
+
+			const [success, data] = pcall(() => {
+				return store.GetAsync(key);
+			});
+
+			if (!success) {
+				error(data);
+			}
+
+			const res = parseInto(instance, data as unknown as Record<string, unknown>);
+			return assertParsed(res) as InstanceType<TThis>;
+		}
+        /**
+         * Inserts a key in the datastore with the following payload and
+         * validates against model *automagically*
+         */
+		static async insert<TThis extends AbstractCtor<object>>(
+			this: TThis,
+			key: string,
+			payload: InstanceType<TThis>,
+		): Promise<void> {
+			const instance = new (this as unknown as Ctor<InstanceType<TThis>>)();
+
+			const storeName = Reflect.getMetadata<string | undefined>(this, META_ENTITY_KEY);
+			if (storeName === undefined) {
+				return;
+			}
+
+			const props = Reflect.getProperties(payload);
+
+			let data: InstanceType<TThis>;
+
+			if (props.size() === 0) {
+				// Plain object
+                // Transforms into the Entity
+                // to allow plain objects to be validated and inserted.
+				const parsedInto = parseInto(instance, payload as unknown as Record<string, unknown>);
+				const obj = assertParsed(parsedInto) as InstanceType<TThis>;
+
+				data = obj;
+			} else {
+				assertValid(payload);
+				data = payload as InstanceType<TThis>;
+			}
+
+			const store = DataStoreService.GetDataStore(storeName);
+
+			const [success] = pcall(() => {
+				return store.UpdateAsync(key, () => {
+					return [{...data}] as LuaTuple<[InstanceType<TThis>]>;
+				});
+			});
+
+			if (!success) {
+				error(data);
+			}
+		}
+	}
+	return WithOrmClass as unknown as TBase & {
+		select<TThis extends AbstractCtor<object>>(
+			this: TThis,
+			key: string,
+		): Promise<InstanceType<TThis> | undefined>;
+
+	
+		insert<TThis extends AbstractCtor<object>>(
+			this: TThis,
+			key: string,
+			payload: InstanceType<TThis>,
+		): Promise<void>;
+	};
+}
 ```
 
 --------------
