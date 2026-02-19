@@ -7,7 +7,7 @@ import { isNil, ValidateBy } from "./primitives";
  * Performs nested validation on a child object/table.
  *
  * This is the equivalent of "validate the object stored in this property too".
- * It calls your global `validate(value)` function on the nested table and succeeds
+ * It calls the global `validate(value)` function on the nested table and succeeds
  * only if the nested validation produces **zero errors**.
  *
  * Behavior:
@@ -50,7 +50,7 @@ export function Nested(message = "nested validation failed") {
  *
  * This checks:
  * - `typeIs(value, "table")`
- * - `isArrayLikeTable(value)` (your helper for "looks like an array")
+ * - `isArrayLikeTable(value)`
  *
  * Behavior:
  * - Non-table values fail.

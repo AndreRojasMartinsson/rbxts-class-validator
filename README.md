@@ -131,7 +131,7 @@ Adds a typed `static from(plain)` constructor that uses parseInto() + assertPars
 
 #### Objects / arrays / tuples
 
-* @Nested() – runs validate() on a nested DTO/table
+* @Nested() - runs validate() on a nested DTO/table
 * @IsArray()
 * @ArrayMinSize(n), @ArrayMaxSize(n)
 * @ArrayElements((value, index) => string | undefined)
@@ -148,13 +148,13 @@ Adds a typed `static from(plain)` constructor that uses parseInto() + assertPars
 * @IsRecord(), @RecordEntries(keyValidator?, valueValidator?, message?)
 * @IsMap(), @MapEntries(keyValidator?, valueValidator?, message?)
 * @IsSet(), @SetElements(elementValidator, message?)
-* @IsReadonly() – validates deep frozen tables via table.isfrozen recursion
+* @IsReadonly() - validates deep frozen tables via table.isfrozen recursion
 
 #### Unions
 
-* @Union(A, B, ...) – passes if any schema matches
-* @ExclusiveUnion(A, B, ...) – passes if exactly one schema matches
-* @Intersect(A, B, ...) – passes if all schemas match
+* @Union(A, B, ...) - passes if any schema matches
+* @ExclusiveUnion(A, B, ...) - passes if exactly one schema matches
+* @Intersect(A, B, ...) - passes if all schemas match
 * @DiscriminatedUnion("tag", { car: CarDto, bike: BikeDto })
 
 Schemas can be either:
@@ -171,8 +171,8 @@ Built-ins:
 * @Coerce.String()
 * @Coerce.Number()
 * @Coerce.Boolean()
-* @Coerce.Default(valueOrFactory) – only applies when property is optional and value is nil
-* @Coerce.Readonly() – deep freezes tables (recursive table.freeze)
+* @Coerce.Default(valueOrFactory) - only applies when property is optional and value is nil
+* @Coerce.Readonly() - deep freezes tables (recursive table.freeze)
 
 Example:
 ```typescript

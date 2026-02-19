@@ -78,7 +78,7 @@ export function validate(obj: object): ValidationError[] {
  * Parse + validate + transform from a plain object, but DON'T mutate target until success.
  * This is what WithFrom.from() should use.
  *
- * Keeps extra keys from `plain` (same behavior as your previous Object.assign),
+ * Keeps extra keys from `plain`
  * but ensures decorated props are coerced/validated/transformed before commit.
  */
 export function parseInto<T extends object>(

@@ -14,7 +14,7 @@ function escapeLuaPattern(s: string) {
 /**
  * Validates that a value is exactly equal (`===`) to one of a fixed set of literal values.
  *
- * This is the "enum literal" validator for your system.
+ * This is the "enum literal" validator
  *
  * - Works with `string | number | boolean` literals.
  * - Uses strict equality (`===`), so `"1"` will NOT match `1`, and `true` will NOT match `"true"`.
@@ -26,11 +26,6 @@ function escapeLuaPattern(s: string) {
  * IsLiteral(1, 2, 3, "custom message")
  * IsLiteral(true, false)
  * ```
- *
- * The last argument is treated as a **message** only if it’s a string.
- * That means if your allowed literals include strings, it’s still unambiguous:
- * - The last string is always interpreted as the message.
- * - So you should include the message only when you actually want a message override.
  *
  * ## Default error messages
  * - One allowed value:

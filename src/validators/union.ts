@@ -64,7 +64,7 @@ function validateAgainstSchema(
  * If all variants fail, it returns a combined error describing why each variant failed.
  *
  * ## What counts as a "schema"?
- * `SchemaLike` is whatever your `validateAgainstSchema(...)` supports, typically:
+ * `SchemaLike` is whatever `validateAgainstSchema(...)` supports, typically:
  * - a class (DTO) with validators
  * - a predicate-style function schema
  * - other schema adapters you’ve implemented
@@ -254,7 +254,7 @@ export function Intersect(...schemas: SchemaLike[]) {
  * ```ts
  * validateAgainstSchema(schema, value, ctx, { allowKeys: [discriminator] })
  * ```
- * This is useful when your object validator rejects "unknown keys":
+ * This is useful when the object validator rejects "unknown keys":
  * it ensures the discriminator itself doesn’t get flagged as an extra/unexpected key while validating the variant.
  *
  * ## Example

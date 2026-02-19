@@ -100,7 +100,7 @@ export namespace Coerce {
 
 	/**
 	 * Applies a default value **only if**:
-	 * 1) the property is marked optional (`@IsOptional()` / your optional marker), **and**
+	 * 1) the property is marked optional (`@IsOptional()`), **and**
 	 * 2) the incoming value is `nil`.
 	 *
 	 * This is intentionally conservative:

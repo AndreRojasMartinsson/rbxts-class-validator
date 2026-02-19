@@ -103,7 +103,7 @@ export type PropertyKey = string | number;
  * ## Why this is useful
  * - Enables TypeScript to narrow using `if (x.type === "car") { ... }`.
  * - Ensures each variant *must* carry the correct discriminator value.
- * - Keeps your "variant map" as the single source of truth.
+ * - Keeps the "variant map" as the single source of truth.
  *
  * ## Example: classic vehicle union
  * ```ts
