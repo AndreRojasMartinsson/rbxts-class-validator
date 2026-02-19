@@ -1,0 +1,39 @@
+---
+name: Tests
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  run-tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+      - name: Install Deps
+        run: |
+          bun i
+          cd tests && bun i
+          cd ..
+      - name: Run Tests
+        run: |-
+          bun run build
+          bun run test | tee test-output.txt
+          bun run coverage
+          output=$(<test-output.txt)
+          cleaned_output=$(echo "$output" | sed 's/\x1b\[[0-9;]*m//g')
+          cleaned_output=$(echo "$cleaned_output" | sed 's/\x1b\[0m$//')
+          if [[ $cleaned_output =~ Failed:\ 0$ ]]; then
+            exit 0
+          else
+            exit 1
+          fi
+      - name: Report coverage
+        continue-on-error: true
+        uses: coverallsapp/github-action@v2.3.4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: coverage/lcov.info
