@@ -1,0 +1,26 @@
+{
+	"name": "test",
+	"tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"tests": {
+				"$path": "out/tests/src"
+			},
+			"lib": {
+				"$path": "out/src"
+			},
+			"rbxts_include": {
+				"$path": "include",
+				"node_modules": {
+					"$className": "Folder",
+					"@rbxts": {
+						"$path": "node_modules/@rbxts"
+					},
+					"@flamework": {
+						"$path": "node_modules/@flamework"
+					}
+				}
+			}
+		}
+	}
+}
