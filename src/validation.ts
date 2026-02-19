@@ -8,8 +8,10 @@ import {
 	META_TRANSFORM_KEY,
 } from "./constants";
 import { isNil } from "./validators/primitives";
-import { HttpService } from "@rbxts/services";
+// import { HttpService } from "@rbxts/services";
 import { getAllowedKeys } from "./helpers";
+
+const HttpService = game.GetService("HttpService");
 
 export function validate(obj: object): ValidationError[] {
 	const errors: ValidationError[] = [];

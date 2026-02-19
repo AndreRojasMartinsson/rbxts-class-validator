@@ -8,9 +8,12 @@
 		"url": "git+https://github.com/AndreRojasMartinsson/rbxts-class-validator.git"
 	},
 	"scripts": {
-		"build": "rbxtsc",
-		"watch": "rbxtsc -w",
-		"prepublishOnly": "bun run build"
+		"setup": "rokit trust lune-org/lune && rokit trust rojo-rbx/rojo && rokit install",
+		"build": "bun run setup && rbxtsc ",
+		"watch": "bun run setup && rbxtsc -w",
+		"prepublishOnly": "bun run test && rbxtsc",
+		"test": "bun run build && bun run build -- -p tests && rojo build tests -o tests/test-environment.rbxl && lune run tests tests/test-environment.rbxl",
+		"coverage": "nyc report && lune run fix-lcov-paths"
 	},
 	"keywords": [
 		"validation",
@@ -36,20 +39,21 @@
 		"@rbxts/luau-polyfill": "*"
 	},
 	"devDependencies": {
-		"rbxts-transformer-flamework": "^1.3.2",
+		"@eslint/js": "^10.0.1",
 		"@flamework/core": "^1.1.1",
 		"@rbxts/compiler-types": "3.0.0-types.0",
 		"@rbxts/types": "^1.0.908",
-		"prettier": "^3.8.1",
-		"roblox-ts": "^3.0.0",
-		"typescript": "5.5.3",
-		"typescript-eslint": "^8.56.0",
-		"@eslint/js": "^10.0.1",
 		"@typescript-eslint/eslint-plugin": "^8.56.0",
 		"@typescript-eslint/parser": "^8.56.0",
 		"eslint": "9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.5",
-		"eslint-plugin-roblox-ts": "^1.3.1"
+		"eslint-plugin-roblox-ts": "^1.3.1",
+		"nyc": "^17.1.0",
+		"prettier": "^3.8.1",
+		"rbxts-transformer-flamework": "^1.3.2",
+		"roblox-ts": "^3.0.0",
+		"typescript": "5.5.3",
+		"typescript-eslint": "^8.56.0"
 	}
 }
