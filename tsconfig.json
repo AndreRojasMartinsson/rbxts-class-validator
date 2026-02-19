@@ -31,5 +31,8 @@
         "transform": "rbxts-transformer-flamework"
       }
     ]
-  }
+  },
+  "exclude": [
+    "tests/**/*"
+  ]
 }
