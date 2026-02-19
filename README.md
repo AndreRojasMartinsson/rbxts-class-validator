@@ -1,5 +1,8 @@
 # @rbxts/class-validator
 
+[![Tests](https://github.com/AndreRojasMartinsson/rbxts-class-validator/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/AndreRojasMartinsson/rbxts-class-validator/actions/workflows/test.yml)
+[![Coverage Status](https://coveralls.io/repos/github/AndreRojasMartinsson/rbxts-class-validator/badge.svg)](https://coveralls.io/github/AndreRojasMartinsson/rbxts-class-validator)
+
 A tiny, decorator-based validation + coercion + transform library for roblox-ts / Luau,
 heavily inspired by how class-validator does validation and "Zod-ish" pipelines.
 https://github.com/typestack/class-validator
