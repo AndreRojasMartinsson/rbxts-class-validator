@@ -8,7 +8,6 @@ import {
 	META_TRANSFORM_KEY,
 } from "./constants";
 import { isNil } from "./validators/primitives";
-// import { HttpService } from "@rbxts/services";
 import { getAllowedKeys } from "./helpers";
 
 const HttpService = game.GetService("HttpService");
