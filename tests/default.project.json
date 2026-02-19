@@ -1,12 +1,12 @@
 {
-	"name": "tests",
+	"name": "test",
 	"tree": {
 		"$className": "DataModel",
 		"ReplicatedStorage": {
-			"tests": {
+			"Tests": {
 				"$path": "out/tests/src"
 			},
-			"lib": {
+			"Library": {
 				"$path": "out/src"
 			},
 			"rbxts_include": {

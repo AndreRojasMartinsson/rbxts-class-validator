@@ -167,8 +167,8 @@ function requireFrom(script: Instance, path: string, robloxRequire)
 	return robloxRequire(path)
 end
 
-runRobloxScript(game.ReplicatedStorage.tests["runner"])
-local reportJSON = game.ReplicatedStorage.__cov.Value
+runRobloxScript(game.ReplicatedStorage.Tests["run-tests"])
+local reportJSON = game.ReplicatedStorage.coverage.Value
 fs.writeDir("coverage")
 fs.writeFile("coverage/coverage-final.json", reportJSON)
 
