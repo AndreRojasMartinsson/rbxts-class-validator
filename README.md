@@ -1,4 +1,9 @@
+
+<img width="100%" alt="@rbxts/class-validator banner" src="https://github.com/user-attachments/assets/975be317-efc4-41a9-af38-17d88b787e47" />
+
 # @rbxts/class-validator
+
+
 
 [![Tests](https://github.com/AndreRojasMartinsson/rbxts-class-validator/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/AndreRojasMartinsson/rbxts-class-validator/actions/workflows/test.yml)
 [![Coverage Status](https://coveralls.io/repos/github/AndreRojasMartinsson/rbxts-class-validator/badge.svg)](https://coveralls.io/github/AndreRojasMartinsson/rbxts-class-validator)
