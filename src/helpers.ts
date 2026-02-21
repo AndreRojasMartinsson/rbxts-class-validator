@@ -19,6 +19,16 @@ export function slice<T>(arr: T[], start = 0, end_ = arr.size()): T[] {
 	return result as T[];
 }
 
+export function isEmptyTable(value: object): boolean {
+	let count = 0;
+
+	for (const _ of pairs(value)) {
+		count++;
+	}
+
+	return count === 0;
+}
+
 /** Format nested validation errors into a short string */
 export function formatErrors(errs: ReturnType<typeof validate>) {
 	// errs is ValidationError[]
