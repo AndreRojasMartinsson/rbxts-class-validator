@@ -1,4 +1,4 @@
-import { isNonArrayTable } from "../helpers";
+import { isEmptyTable, isNonArrayTable } from "../helpers";
 import { isNil, ValidateBy } from "./primitives";
 
 function isDeepFrozen<T extends object>(obj: T, seen?: Set<T>): boolean {
@@ -94,7 +94,8 @@ export function IsReadonly(message = "must be frozen") {
  */
 export function IsRecord(message = "must be a record") {
 	return ValidateBy("IsRecord", (value) => {
-		if (!isNonArrayTable(value)) return message;
+		if (!typeIs(value, "table")) return message;
+		if (!isEmptyTable(value) && !isNonArrayTable(value)) return message;
 
 		for (const [k] of pairs(value as object)) {
 			if (!typeIs(k, "string")) return message;
@@ -152,7 +153,8 @@ export function RecordEntries(
 	message = "record entries invalid",
 ) {
 	return ValidateBy("RecordEntries", (value) => {
-		if (!isNonArrayTable(value)) return "must be a record";
+		if (!typeIs(value, "table")) return message;
+		if (!isEmptyTable(value) && !isNonArrayTable(value)) return message;
 
 		for (const [k, v] of pairs(value as object)) {
 			if (!typeIs(k, "string")) return "must be a record";
