@@ -1,6 +1,6 @@
 {
 	"name": "@rbxts/class-validator",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "In-depth validation library using classes and decorators",
 	"main": "out/init.lua",
 	"repository": {
