@@ -200,7 +200,8 @@ export function RecordEntries(
  */
 export function IsMap(message = "must be a map") {
 	return ValidateBy("IsMap", (value) => {
-		if (!isNonArrayTable(value)) return message;
+		if (!typeIs(value, "table")) return message;
+		if (!isEmptyTable(value) && !isNonArrayTable(value)) return message;
 		return undefined;
 	});
 }
@@ -249,7 +250,8 @@ export function MapEntries(
 	message = "map entries invalid",
 ) {
 	return ValidateBy("MapEntries", (value) => {
-		if (!isNonArrayTable(value)) return "must be a map";
+		if (!typeIs(value, "table")) return "must be a map";
+		if (!isEmptyTable(value) && !isNonArrayTable(value)) return "must be a map";
 
 		for (const [k, v] of pairs(value as object)) {
 			if (keyValidator) {
@@ -297,7 +299,8 @@ export function MapEntries(
  */
 export function IsSet(message = "must be a set") {
 	return ValidateBy("IsSet", (value) => {
-		if (!isNonArrayTable(value)) return message;
+		if (!typeIs(value, "table")) return message;
+		if (!isEmptyTable(value) && !isNonArrayTable(value)) return message;
 
 		for (const [, v] of pairs(value as object)) {
 			// allow true or 1 (handy if people build sets from counts)
@@ -343,7 +346,8 @@ export function SetElements(
 	message = "set elements invalid",
 ) {
 	return ValidateBy("SetElements", (value) => {
-		if (!isNonArrayTable(value)) return "must be a set";
+		if (!typeIs(value, "table")) return "must be a set";
+		if (!isEmptyTable(value) && !isNonArrayTable(value)) return "must be a set";
 
 		for (const [k, v] of pairs(value as object)) {
 			if (v !== true && v !== 1) return "must be a set";

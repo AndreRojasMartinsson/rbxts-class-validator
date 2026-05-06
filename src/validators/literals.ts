@@ -7,8 +7,8 @@ function literalToString(v: unknown) {
 }
 
 function escapeLuaPattern(s: string) {
-	// Escape Lua pattern magic chars: ( ) . % + - * ? [ ^ $
-	return (s as string).gsub("([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")[0];
+	// Escape Lua pattern magic chars: ( ) . % + - * ? [ ] ^ $
+	return (s as string).gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")[0];
 }
 
 /**
@@ -133,45 +133,63 @@ export function IsLiteral<T extends readonly (string | number | boolean)[]>(...a
  * - Non-string inputs fail immediately with the provided message.
  */
 export function IsTemplateLiteral(template: string, message = `must match template ${template}`) {
-	let pattern = "^";
+	let patterns = ["^"];
 	let i = 1;
+
+	const appendPattern = (fragment: string) => {
+		patterns = patterns.map((pattern) => pattern + fragment);
+	};
+
+	const expandPatterns = (fragments: string[]) => {
+		const expanded: string[] = [];
+		for (const pattern of patterns) {
+			for (const fragment of fragments) {
+				expanded.push(pattern + fragment);
+			}
+		}
+		patterns = expanded;
+	};
 
 	while (i <= template.size()) {
 		const rest = template.sub(i);
 		const openIdx = rest.find("${")[0];
 		if (openIdx === undefined) {
-			pattern += escapeLuaPattern(template.sub(i));
+			appendPattern(escapeLuaPattern(template.sub(i)));
 			break;
 		}
 
 		const absOpen = i + (openIdx as number) - 1;
-		pattern += escapeLuaPattern(template.sub(i, absOpen - 1));
+		appendPattern(escapeLuaPattern(template.sub(i, absOpen - 1)));
 
 		const closeStart = template.find("}", absOpen + 2)[0];
 		if (closeStart === undefined) {
-			pattern += escapeLuaPattern(template.sub(absOpen));
+			appendPattern(escapeLuaPattern(template.sub(absOpen)));
 			break;
 		}
 
 		const token = template.sub(absOpen + 2, (closeStart as number) - 1) as Placeholder;
 
-		if (token === "string") pattern += "(.+)";
-		else if (token === "number") pattern += "([%-]?%d+%.?%d*)";
-		else if (token === "int") pattern += "([%-]?%d+)";
-		else if (token === "boolean") pattern += "((true)|(false)|(1)|(0))";
+		if (token === "string") appendPattern("(.+)");
+		else if (token === "number") appendPattern("([%-]?%d+%.?%d*)");
+		else if (token === "int") appendPattern("([%-]?%d+)");
+		else if (token === "boolean") expandPatterns(["true", "false", "1", "0"].map(escapeLuaPattern));
 		else {
-			pattern += escapeLuaPattern("${" + token + "}");
+			appendPattern(escapeLuaPattern("${" + token + "}"));
 		}
 
 		i = (closeStart as number) + 1;
 	}
 
-	pattern += "$";
+	appendPattern("$");
 
 	return ValidateBy("IsTemplateLiteral", (value) => {
 		if (!typeIs(value, "string")) return message;
 
-		const matches = value.match(pattern);
-		return matches.size() > 0 ? undefined : message;
+		for (const pattern of patterns) {
+			const matches = value.match(pattern);
+			if (matches.size() > 0) return undefined;
+		}
+
+		return message;
 	});
 }

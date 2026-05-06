@@ -1,4 +1,5 @@
 import { TransformFn } from "../types";
+import { isArrayLikeTable } from "../helpers";
 import { isNil, pushTransform } from "./primitives";
 
 export namespace Transform {
@@ -44,8 +45,8 @@ export namespace Transform {
 		return Custom((value) => {
 			if (isNil(value)) return { ok: true, value };
 			if (!typeIs(value, "table")) return { ok: false, message };
+			if (!isArrayLikeTable(value as object)) return { ok: false, message };
 
-			// assumes Luau array-like {1..n}
 			const arr = value as unknown[];
 			const out: defined[] = [];
 			for (let i = 0; i < arr.size(); i += 1) {
